@@ -65,6 +65,15 @@ SELECT S.estadio, COUNT(*)
 	GROUP BY S.estadio
 	HAVING COUNT(*)>5
 
+--***** Reasignar el generador autonumerico de la tabla 'encuentro' ******
+--obtener valor maximo de ID actual
+SELECT MAX(id) FROM encuentro
+
+--Averiguar nombre del gestor de autonumericos de la tabla 'encuentro'
+SELECT pg_get_serial_sequence('encuentro', 'id');
+
+ALTER SEQUENCE encuentro_id_seq RESTART 31
+
 --Agregar el encuentro: 2 de septiembre, Ghana 1:2 Austria, Estadio Metropolitano de Techo, Bogotá
 --en el mundial femenino sub20
 
@@ -90,4 +99,6 @@ SELECT * FROM pais WHERE pais IN ('Japón', 'Nueva Zelanda')
 INSERT INTO encuentro
 	(fecha, idpais1, idpais2, idfase, idcampeonato, idestadio, goles1, goles2)
 	VALUES('2024-09-02', 5, 57, 1, 12,  62,  7,  0)
+
+
 	
