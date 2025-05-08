@@ -18,12 +18,29 @@ AS
 			JOIN ciudad C ON E.idciudad=C.id
 			JOIN pais P ON p.id=C.idpais;
 
+CREATE VIEW vGrupo
+AS
+	SELECT C.id idcampeonato, C.campeonato, 
+		C.idpais idpaissede, P.pais paissede, 
+		G.grupo, G.id, GP.idpais, PG.pais
+		FROM campeonato C
+			JOIN pais P ON C.idpais=P.id
+			LEFT JOIN grupo G ON C.id=G.idcampeonato
+			LEFT JOIN grupopais GP ON GP.idgrupo=G.id
+			LEFT JOIN pais PG ON GP.idpais=PG.id;
+
+--*****************************
+SELECT *
+	FROM vGrupo
+	WHERE campeonato='FIFA World Cup 2022';
+
 SELECT *
 	FROM vEncuentro
 	WHERE campeonato='FIFA World Cup 2022';
 
-
 SELECT *
 	FROM vEstadio
-	WHERE ciudad LIKE '%Colombia%'
+	WHERE ciudad LIKE '%Catar%'
+
+
 
