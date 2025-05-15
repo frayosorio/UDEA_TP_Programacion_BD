@@ -1,3 +1,4 @@
+--version IMPERATIVA
 CREATE OR REPLACE PROCEDURE spGenerarEncuentrosGrupo(
 	idgrupogenerar INTEGER
 )
@@ -55,5 +56,33 @@ BEGIN
 		CLOSE cursorOtrosPaises;
 	END LOOP;
 	CLOSE cursorPaises;
+END
+$$;
+
+--version DECLARATIVA
+CREATE OR REPLACE PROCEDURE spGenerarEncuentrosGrupo(
+	idgrupogenerar INTEGER
+)
+LANGUAGE plpgsql
+AS $$
+	DECLARE idcampeonatogrupo INTEGER;
+
+BEGIN
+	--obtener el ID del campeonato
+	SELECT idcampeonato INTO idcampeonatogrupo
+		FROM grupo
+		WHERE id = idgrupogenerar;
+		
+	INSERT INTO encuentro
+		(idpais1, goles1, idpais2, goles2, fecha, idestadio, idfase, idcampeonato)
+		SELECT GP1.idpais, null, GP2.idpais, null, null, 0, 1, idcampeonatogrupo
+			FROM grupopais GP1
+				JOIN grupopais GP2 ON GP1.idgrupo=GP2.idgrupo
+					AND GP2.idpais > GP1.idpais
+			WHERE GP1.idgrupo = idgrupogenerar
+				AND NOT EXISTS(SELECT * FROM encuentro
+								WHERE ((idpais1=GP1.idpais AND idpais2=GP2.idpais) OR
+									(idpais1=GP2.idpais AND idpais2=GP1.idpais)) 
+									AND idfase=1 AND idcampeonato=idcampeonatogrupo);
 END
 $$;
